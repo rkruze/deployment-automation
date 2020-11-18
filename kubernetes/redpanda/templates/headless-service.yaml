@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: headless-{{ include "redpanda.fullname" . }}
+  name: redpanda-cluster-kafka-bootstrap
   labels:
     {{- include "redpanda.labels" . | nindent 4 }}
 spec:
