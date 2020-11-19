@@ -1,5 +1,11 @@
 # Kubernetes Helm Chart
 
+
+
+**Not ready for customers. Not ready for production.** 
+
+
+
 This is the Helm Chart for [Redpanda](https://vectorized.io). A Helm Chart is a collection of files used to describe a set of Kubernetes resources, and may be used to deploy and manage Redpanda in a cloud such as AWS or GCP.
 
 ## Local Installation
