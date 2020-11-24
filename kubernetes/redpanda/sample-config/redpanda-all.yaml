@@ -1,0 +1,131 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: redpanda-headless
+  labels:
+    app: redpanda
+spec:
+  clusterIP: None
+  ports:
+    - port: 9092 # {{ .Values.service.port }}
+      name: broker
+      #targetPort: http
+      #protocol: TCP
+      #name: http
+  selector:
+    app: redpanda
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: base-config
+data:
+  redpanda.yaml: |
+    config_file: /etc/redpanda/redpanda.yaml
+    license_key: ""
+    node_uuid: mf1PqvLg826mCjiYRRKcBb4MjtL88agNyGajk3GoELmgKixYA
+    organization: ""
+    redpanda:
+      admin:
+        address: 0.0.0.0
+        port: 9644
+      auto_create_topics_enabled: true
+      data_directory: /var/lib/redpanda/data
+      developer_mode: false
+      kafka_api:
+        address: 0.0.0.0
+        port: 9092
+      kafka_api_tls:
+        cert_file: ""
+        enabled: false
+        key_file: ""
+        truststore_file: ""
+      node_id: 1
+      rpc_server:
+        address: 0.0.0.0
+        port: 33145
+      seed_servers: []
+    rpk:
+      coredump_dir: /var/lib/redpanda/coredump
+      enable_memory_locking: false
+      enable_usage_stats: true
+      overprovisioned: false
+      tls:
+        cert_file: ""
+        key_file: ""
+        truststore_file: ""
+      tune_aio_events: false
+      tune_clocksource: false
+      tune_coredump: false
+      tune_cpu: false
+      tune_disk_irq: false
+      tune_disk_nomerges: false
+      tune_disk_scheduler: false
+      tune_fstrim: false
+      tune_network: false
+      tune_swappiness: false
+      tune_transparent_hugepages: false
+
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: redpanda
+spec:
+  selector:
+    matchLabels:
+      app: redpanda
+  serviceName: "redpanda"
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: redpanda
+    spec:
+      initContainers:
+        - name: redpanda-configurator
+          image: vectorized/redpanda
+          env:
+            - name: MY_POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+          command: ["/bin/sh", "-c"]
+          args:
+            - >
+              apt update;
+              apt install -y dnsutils jq;
+              cp /tmp/base-config/redpanda.yaml /tmp/config/;
+              rpk --config /tmp/config/redpanda.yaml config set redpanda.advertised_kafka_api.address $MY_POD_IP;
+              rpk --config /tmp/config/redpanda.yaml config set redpanda.advertised_kafka_api.port 9092;
+              rpk --config /tmp/config/redpanda.yaml config set redpanda.node_id ${HOSTNAME##*-};
+              rpk --config /tmp/config/redpanda.yaml config set rpk.smp 2;
+              IPS=$(nslookup redpanda-headless | grep Address | tail -n +2 | cut -d ' ' -f 2 | jq -R -s -c 'split("\n") | map(select(. != "")) | map({"host":{"address": ., "port":9092}})');
+              echo "$IPS";
+              echo "rpk --config /tmp/config/redpanda.yaml config set redpanda.seed_servers '$IPS' --format yaml";
+              rpk --config /tmp/config/redpanda.yaml config set redpanda.seed_servers $IPS --format yaml;
+              cat /tmp/config/redpanda.yaml;
+          securityContext:
+            allowPrivilegeEscalation: false
+            runAsUser: 0
+          volumeMounts:
+            - name: base-config
+              mountPath: /tmp/base-config
+            - name: config
+              mountPath: /tmp/config
+      containers:
+        - name: redpanda
+          image: vectorized/redpanda
+          args: ["--config /tmp/config/redpanda.yaml", "start"]
+          ports:
+            - containerPort: 9092
+              name: kafka
+          volumeMounts:
+            - name: config
+              mountPath: /tmp/config
+      volumes:
+        - name: base-config
+          configMap:
+            name: base-config
+        - name: config
+          emptyDir: {}
