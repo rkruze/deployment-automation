@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: redpanda
+spec:
+  selector:
+    matchLabels:
+     app: redpanda
+  serviceName: "redpanda"
+  replicas: 1     # 3
+  template:
+    metadata:
+      labels:
+        app: redpanda
+    spec:
+      containers:
+      - name: redpanda-0
+        image: vectorized/redpanda
+        ports:
+        - containerPort: 9092
+          name: kafka
+        resources:
+          {{- toYaml .Values.resources | nindent 12 }}
+        securityContext:
+          {{- toYaml .Values.securityContext | nindent 12 }}
+        # lifecycle: inject 'rpk config' here?
+        # env: TODO: set environment variables
+        volumeMounts:
+        - name: redpanda-config
+          mountPath: /tmp/sample-config/node-0-conf/redpanda.yaml         # should be relative 
+      - name: redpanda-1
+        image: vectorized/redpanda
+        ports:
+        - containerPort: 9092
+          name: kafka
+        resources:
+          {{- toYaml .Values.resources | nindent 12 }}
+        securityContext:
+          {{- toYaml .Values.securityContext | nindent 12 }}
+        # lifecycle: inject 'rpk config' here?
+        # env: TODO: set environment variables
+        volumeMounts:
+        - name: redpanda-config
+          mountPath: /tmp/sample-config/node-1-conf/redpanda.yaml         # should be relative 
+      - name: redpanda-2
+        image: vectorized/redpanda
+        ports:
+        - containerPort: 9092
+          name: kafka
+        resources:
+          {{- toYaml .Values.resources | nindent 12 }}
+        securityContext:
+          {{- toYaml .Values.securityContext | nindent 12 }}
+        # lifecycle: inject 'rpk config' here?
+        # env: TODO: set environment variables
+        volumeMounts:
+        - name: redpanda-config
+          mountPath: /tmp/sample-config/node-2-conf/redpanda.yaml         # should be relative 
