@@ -83,10 +83,6 @@ spec:
         app: redpanda
     spec:
       initContainers:
-        # - name: init-mydb
-        #   image: busybox:1.28
-        #   command: ["sh", "-c"]
-        #   args: ["nslookup redpanda-headless"]
         - name: redpanda-configurator
           image: vectorized/redpanda
           env:
@@ -96,11 +92,22 @@ spec:
                   fieldPath: status.podIP
           command: ["/bin/sh", "-c"]
           args:
-            - cp /tmp/base-config/redpanda.yaml /tmp/config/;
+            - >
+              apt update;
+              apt install -y dnsutils jq;
+              cp /tmp/base-config/redpanda.yaml /tmp/config/;
               rpk --config /tmp/config/redpanda.yaml config set redpanda.advertised_kafka_api.address $MY_POD_IP;
               rpk --config /tmp/config/redpanda.yaml config set redpanda.advertised_kafka_api.port 9092;
               rpk --config /tmp/config/redpanda.yaml config set redpanda.node_id ${HOSTNAME##*-};
               rpk --config /tmp/config/redpanda.yaml config set rpk.smp 2;
+              IPS=$(nslookup redpanda-headless | grep Address | tail -n +2 | cut -d ' ' -f 2 | jq -R -s -c 'split("\n") | map(select(. != "")) | map({"host":{"address": ., "port":9092}})');
+              echo "$IPS";
+              echo "rpk --config /tmp/config/redpanda.yaml config set redpanda.seed_servers '$IPS' --format yaml";
+              rpk --config /tmp/config/redpanda.yaml config set redpanda.seed_servers $IPS --format yaml;
+              cat /tmp/config/redpanda.yaml;
+          securityContext:
+            allowPrivilegeEscalation: false
+            runAsUser: 0
           volumeMounts:
             - name: base-config
               mountPath: /tmp/base-config
@@ -109,10 +116,7 @@ spec:
       containers:
         - name: redpanda
           image: vectorized/redpanda
-          # command: ["/bin/sh", "-c"]
           args: ["--config /tmp/config/redpanda.yaml", "start"]
-          # args:
-          #   ["cat /tmp/config/redpanda.yaml; cat /etc/redpanda/redpanda.yaml"]
           ports:
             - containerPort: 9092
               name: kafka
