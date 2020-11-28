@@ -1,60 +1,51 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: {{ template "redpanda.fullname" . }}
+  name: {{ template "redpanda.name" . }}
 spec:
   selector:
     matchLabels:
-     app: {{ template "redpanda.name" . }} 
-  serviceName: {{ template "redpanda.fullname" . }}-headless
+     app: {{ template "redpanda.name" . }}
+  serviceName: {{ template "redpanda.name" . }}
   replicas: {{ .Values.replicaCount }}
   template:
     metadata:
       labels:
-        app: redpanda
+        app: {{ template "redpanda.name" . }} 
     spec:
       initContainers:
-        # - name: init-mydb
-        #   image: busybox:1.28
-        #   command: ["sh", "-c"]
-        #   args: ["nslookup redpanda-headless"]
-        - name: redpanda-configurator
-          image: vectorized/redpanda
-          env: 
-            - name: MY_POD_IP
-              valueFrom:
-                fieldRef:
-                  fieldPath: status.podIP
+        - name: {{ template "redpanda.name" . }}-configurator
+          image: {{ .Values.image.repository }}
           command: ["/bin/sh", "-c"]
           args:
             - >
-              apt update;
-              apt install -y dnsutils; # jq;
-              cp /tmp/base-config/redpanda.yaml /tmp/config/;
-              rpk --config /tmp/config/redpanda.yaml config set redpanda.advertised_kafka_api.address $MY_POD_IP;
-              rpk --config /tmp/config/redpanda.yaml config set redpanda.advertised_kafka_api.port 9092;
+              CONFIG=/tmp/config/redpanda.yaml;
               NODE_ID=${HOSTNAME##*-};
-              rpk --config /tmp/config/redpanda.yaml config set rpk.smp 2;
-              echo "NODE_ID: $NODE_ID";
+              SERVICE_NAME=redpanda-$NODE_ID;
+              cp /tmp/base-config/redpanda.yaml $CONFIG;
+              rpk --config $CONFIG config set redpanda.node_id $NODE_ID;
               if [ "$NODE_ID" = "0" ]; then
-                rpk --config /tmp/config/redpanda.yaml config set redpanda.seed_servers '[]' --format yaml;
+                rpk --config $CONFIG config set redpanda.seed_servers '[]' --format yaml;
               fi;
-              cat /tmp/config/redpanda.yaml;
-          securityContext:
-            allowPrivilegeEscalation: false
-            runAsUser: 0
+              rpk --config $CONFIG config set redpanda.advertised_rpc_api.address $SERVICE_NAME;
+              rpk --config $CONFIG config set redpanda.advertised_rpc_api.port 33145;
+              rpk --config $CONFIG config set redpanda.advertised_kafka_api.address $SERVICE_NAME;
+              rpk --config $CONFIG config set redpanda.advertised_kafka_api.port 9092;
+              rpk --config $CONFIG config set rpk.smp 1;
           volumeMounts:
             - name: base-config
               mountPath: /tmp/base-config
             - name: config
               mountPath: /tmp/config 
       containers:
-        - name: redpanda
-          image: vectorized/redpanda
+        - name: {{ template "redpanda.name" . }}
+          image: {{ .Values.image.repository }}
           # command: ["/bin/sh", "-c"]
-          args: ["--config /tmp/config/redpanda.yaml", "start"]
-          # args:
-          #   ["cat /tmp/config/redpanda.yaml; cat /etc/redpanda/redpanda.yaml"]
+          args:
+           - --config /tmp/config/redpanda.yaml
+           - start
+           - --
+           - --default-log-level=debug
           ports:
             - containerPort: 9644
               name: admin
@@ -67,8 +58,6 @@ spec:
               mountPath: /tmp/config
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
-          securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
       volumes:
         - name: base-config
           configMap:
