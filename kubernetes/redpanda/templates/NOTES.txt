@@ -1,5 +1,5 @@
 
-Thank you for installing {{ .Chart.Name }}.
+Congratulations on installing {{ .Chart.Name }}!
 
 The pods will rollout in a few seconds. To check the status:
 
