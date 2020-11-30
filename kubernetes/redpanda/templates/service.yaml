@@ -1,7 +1,8 @@
+{{- range untilStep 0 3 1 }}
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "redpanda.name" . }}-2
+  name: redpanda-{{ . }}
 spec:
   ports:
     - name: rpc
@@ -13,4 +14,6 @@ spec:
       port: 9092
       targetPort: 9092
   selector:
-    statefulset.kubernetes.io/pod-name: {{ include "redpanda.name" . }}-2
+    statefulset.kubernetes.io/pod-name: redpanda-{{ . }}
+---
+{{- end }}
