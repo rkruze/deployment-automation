@@ -5,7 +5,7 @@ metadata:
 spec:
   selector:
     matchLabels:
-     app: {{ template "redpanda.name" . }}
+      app: {{ template "redpanda.name" . }}
   serviceName: {{ template "redpanda.name" . }}
   replicas: {{ .Values.replicaCount }}
   template:
