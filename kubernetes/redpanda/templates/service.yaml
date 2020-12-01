@@ -14,6 +14,10 @@ spec:
       protocol: TCP
       port: {{ $envAll.Values.redpanda.advertised_kafka_api.port }}
       targetPort: {{ $envAll.Values.redpanda.advertised_kafka_api.port }}
+    - name: admin
+      protocol: TCP
+      port: {{ $envAll.Values.redpanda.admin.port }}
+      targetPort: {{ $envAll.Values.redpanda.admin.port }}
   selector:
     statefulset.kubernetes.io/pod-name: {{ include "redpanda.fullname" $envAll }}-{{ . }}
 ---
