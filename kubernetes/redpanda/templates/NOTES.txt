@@ -3,13 +3,13 @@ Congratulations on installing {{ .Chart.Name }}!
 
 The pods will rollout in a few seconds. To check the status:
 
-  $ kubectl rollout status -w statefulset/redpanda
+  $ kubectl -n redpanda rollout status -w statefulset/redpanda
 
 Try some sample commands, like creating a topic called topic1:
 
-  $ kubectl run -ti --rm --restart=Never --image vectorized/redpanda rpk -- --brokers=redpanda:9092 api topic create topic1 --partitions=3 --replicas=3
+  $ kubectl -n redpanda run -ti --rm --restart=Never --image vectorized/redpanda rpk -- --brokers=redpanda:9092 api topic create topic1 --partitions=3 --replicas=3
 
 To get the api status:
  
- $ kubectl run -ti --rm --restart=Never --image vectorized/redpanda rpk -- --brokers=redpanda:9092 api status
+ $ kubectl -n redpanda run -ti --rm --restart=Never --image vectorized/redpanda rpk -- --brokers=redpanda:9092 api status
 

@@ -32,24 +32,11 @@ For development purposes, it can be installed locally on Linux or Mac OS.
 
 - Run `kind create cluster`
 
-- Run `helm install redpanda ./redpanda`. This will read the Helm Chart in the redpanda folder and deploy the Redpanda Docker image (the latest from Docker Hub) to pods. For now it just creates a basic 3 node Redpanda cluster.
+- Run `helm install --namespace redpanda --create-namespace redpanda ./redpanda`. This will read the Helm Chart in the redpanda folder and deploy the Redpanda Docker image (the latest from Docker Hub) to pods. For now it just creates a basic 3 node Redpanda cluster. The `redpanda` namespace will be created if it does not already exist.
 
-- Wait for it to rollout:
+- At this stage you will get further instructions in the terminal about how to run `rpk` in the cluster.
 
-  `kubectl rollout status -w statefulset/redpanda`
-
-- Create a topic `topic1`:
-
-  ```
-  kubectl run -ti --rm --restart=Never --image vectorized/redpanda rpk -- --brokers=redpanda:9092 api topic create topic1 --partitions=3 --replicas=3
-  ```
-
-- Get api status:
-
-  ```
-  kubectl run -ti --rm --restart=Never --image vectorized/redpanda rpk -- --brokers=redpanda:9092 api status
-  ```
-
+  
 
 
 ## Development
