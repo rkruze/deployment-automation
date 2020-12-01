@@ -10,6 +10,22 @@ image:
   # Overrides the image tag whose default is the chart appVersion.
   tag: ""
 
+redpanda:
+  advertised_rpc_api:
+    port: 33145
+  advertised_kafka_api:
+    port: 9092
+  admin:
+    port: 9644
+  smp: 1
+
+volumeMount:
+  name: config
+  mountPath: /tmp/config 
+  base:
+    name: base-config
+    mountPath: /tmp/base-config
+
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""

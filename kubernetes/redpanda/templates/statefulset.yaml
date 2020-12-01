@@ -21,22 +21,22 @@ spec:
             - >
               CONFIG=/tmp/config/redpanda.yaml;
               NODE_ID=${HOSTNAME##*-};
-              SERVICE_NAME=redpanda-$NODE_ID;
+              SERVICE_NAME={{ template "redpanda.name" . }}-$NODE_ID;
               cp /tmp/base-config/redpanda.yaml $CONFIG;
               rpk --config $CONFIG config set redpanda.node_id $NODE_ID;
               if [ "$NODE_ID" = "0" ]; then
                 rpk --config $CONFIG config set redpanda.seed_servers '[]' --format yaml;
               fi;
               rpk --config $CONFIG config set redpanda.advertised_rpc_api.address $SERVICE_NAME;
-              rpk --config $CONFIG config set redpanda.advertised_rpc_api.port 33145;
+              rpk --config $CONFIG config set redpanda.advertised_rpc_api.port {{ .Values.redpanda.advertised_rpc_api.port }};
               rpk --config $CONFIG config set redpanda.advertised_kafka_api.address $SERVICE_NAME;
-              rpk --config $CONFIG config set redpanda.advertised_kafka_api.port 9092;
-              rpk --config $CONFIG config set rpk.smp 1;
+              rpk --config $CONFIG config set redpanda.advertised_kafka_api.port {{ .Values.redpanda.advertised_kafka_api.port }};
+              rpk --config $CONFIG config set rpk.smp {{ .Values.redpanda.smp }};
           volumeMounts:
-            - name: base-config
-              mountPath: /tmp/base-config
-            - name: config
-              mountPath: /tmp/config 
+            - name: {{ .Values.volumeMount.base.name }}
+              mountPath: {{ .Values.volumeMount.base.mountPath }}
+            - name: {{ .Values.volumeMount.name }}
+              mountPath: {{ .Values.volumeMount.mountPath }}
       containers:
         - name: {{ template "redpanda.name" . }}
           image: {{ .Values.image.repository }}
@@ -47,20 +47,20 @@ spec:
            - --
            - --default-log-level=debug
           ports:
-            - containerPort: 9644
+            - containerPort: {{ .Values.redpanda.admin.port }}
               name: admin
-            - containerPort: 9092
+            - containerPort: {{ .Values.redpanda.advertised_kafka_api.port }}
               name: kafka
-            - containerPort: 33145
+            - containerPort: {{ .Values.redpanda.advertised_rpc_api.port }}
               name: rpc
           volumeMounts:
-            - name: config
-              mountPath: /tmp/config
+            - name: {{ .Values.volumeMount.name }}
+              mountPath: {{ .Values.volumeMount.mountPath }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       volumes:
-        - name: base-config
+        - name: {{ .Values.volumeMount.base.name }}
           configMap:
-            name: base-config
-        - name: config
+            name: {{ .Values.volumeMount.base.name }}
+        - name: {{ .Values.volumeMount.name }}
           emptyDir: {}
