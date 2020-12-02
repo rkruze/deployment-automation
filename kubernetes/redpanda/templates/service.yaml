@@ -8,16 +8,16 @@ spec:
   ports:
     - name: rpc
       protocol: TCP
-      port: {{ $envAll.Values.redpanda.advertised_rpc_api.port }}
-      targetPort: {{ $envAll.Values.redpanda.advertised_rpc_api.port }}
+      port: {{ $envAll.Values.config.redpanda.advertised_rpc_api.port }}
+      targetPort: {{ $envAll.Values.config.redpanda.advertised_rpc_api.port }}
     - name: kafka
       protocol: TCP
-      port: {{ $envAll.Values.redpanda.advertised_kafka_api.port }}
-      targetPort: {{ $envAll.Values.redpanda.advertised_kafka_api.port }}
+      port: {{ $envAll.Values.config.redpanda.advertised_kafka_api.port }}
+      targetPort: {{ $envAll.Values.config.redpanda.advertised_kafka_api.port }}
     - name: admin
       protocol: TCP
-      port: {{ $envAll.Values.redpanda.admin.port }}
-      targetPort: {{ $envAll.Values.redpanda.admin.port }}
+      port: {{ $envAll.Values.config.redpanda.admin.port }}
+      targetPort: {{ $envAll.Values.config.redpanda.admin.port }}
   selector:
     statefulset.kubernetes.io/pod-name: {{ include "redpanda.fullname" $envAll }}-{{ . }}
 ---

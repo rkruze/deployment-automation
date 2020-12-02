@@ -28,10 +28,10 @@ spec:
                 rpk --config $CONFIG config set redpanda.seed_servers '[]' --format yaml;
               fi;
               rpk --config $CONFIG config set redpanda.advertised_rpc_api.address $SERVICE_NAME;
-              rpk --config $CONFIG config set redpanda.advertised_rpc_api.port {{ .Values.redpanda.advertised_rpc_api.port }};
+              rpk --config $CONFIG config set redpanda.advertised_rpc_api.port {{ .Values.config.redpanda.advertised_rpc_api.port }};
               rpk --config $CONFIG config set redpanda.advertised_kafka_api.address $SERVICE_NAME;
-              rpk --config $CONFIG config set redpanda.advertised_kafka_api.port {{ .Values.redpanda.advertised_kafka_api.port }};
-              rpk --config $CONFIG config set rpk.smp {{ .Values.redpanda.smp }};
+              rpk --config $CONFIG config set redpanda.advertised_kafka_api.port {{ .Values.config.redpanda.advertised_kafka_api.port }};
+              rpk --config $CONFIG config set rpk.smp {{ .Values.config.rpk.smp }};
           volumeMounts:
             - name: {{ .Values.volumeMount.base.name }}
               mountPath: {{ .Values.volumeMount.base.mountPath }}
@@ -47,11 +47,11 @@ spec:
            - --
            - --default-log-level=debug
           ports:
-            - containerPort: {{ .Values.redpanda.admin.port }}
+            - containerPort: {{ .Values.config.redpanda.admin.port }}
               name: admin
-            - containerPort: {{ .Values.redpanda.advertised_kafka_api.port }}
+            - containerPort: {{ .Values.config.redpanda.advertised_kafka_api.port }}
               name: kafka
-            - containerPort: {{ .Values.redpanda.advertised_rpc_api.port }}
+            - containerPort: {{ .Values.config.redpanda.advertised_rpc_api.port }}
               name: rpc
           volumeMounts:
             - name: {{ .Values.volumeMount.name }}

@@ -9,11 +9,11 @@ spec:
   ports:
     - name: rpc
       protocol: TCP
-      port: {{ .Values.redpanda.advertised_rpc_api.port }}
-      targetPort: {{ .Values.redpanda.advertised_rpc_api.port }}
+      port: {{ .Values.config.redpanda.advertised_rpc_api.port }}
+      targetPort: {{ .Values.config.redpanda.advertised_rpc_api.port }}
     - name: kafka
       protocol: TCP
-      port: {{ .Values.redpanda.advertised_kafka_api.port }}
-      targetPort: {{ .Values.redpanda.advertised_kafka_api.port }}
+      port: {{ .Values.config.redpanda.advertised_kafka_api.port }}
+      targetPort: {{ .Values.config.redpanda.advertised_kafka_api.port }}
   selector:
     app: {{ template "redpanda.name" . }}
