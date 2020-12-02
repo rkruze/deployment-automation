@@ -1,6 +1,12 @@
-# Default values for redpanda.
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
+# values.yaml
+#
+# This file contains values for variables referenced from yaml files in the templates directory.
+#
+# For further information on Helm templating see the documentation at:
+#   https://helm.sh/docs/chart_template_guide/values_files/
+#
+# For an explanation of Redpanda configuration values: 
+#   https://vectorized.io/docs/advanced-configuration/ 
 
 replicaCount: 3
 
