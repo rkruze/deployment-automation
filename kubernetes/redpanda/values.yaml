@@ -111,3 +111,8 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+pdb:
+  enabled: false
+  maxUnavailable: 1
+  minAvailable:
