@@ -6,7 +6,6 @@ data:
   redpanda.yaml: |
     config_file: {{ .Values.config.config_file }}
     license_key: {{ .Values.config.license_key }}
-    node_uuid: {{ .Values.config.node_uuid }}
     organization: {{ .Values.config.organization }}
     redpanda:
 {{ toYaml .Values.config.redpanda | indent 6 }}
