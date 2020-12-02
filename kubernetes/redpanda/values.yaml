@@ -19,7 +19,6 @@ image:
 config:
   config_file: /etc/redpanda/redpanda.yaml
   license_key: ""
-  node_uuid: mf1PqvLg826mCjiYRRKcBb4MjtL88agNyGajk3GoELmgKixYA
   organization: ""
   redpanda:
     admin:
