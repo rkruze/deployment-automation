@@ -9,24 +9,7 @@ data:
     node_uuid: {{ .Values.config.node_uuid }}
     organization: {{ .Values.config.organization }}
     redpanda:
-      admin:
-        address: {{ .Values.config.redpanda.admin.address }}
-        port: {{ .Values.config.redpanda.admin.port }}
-      auto_create_topics_enabled: {{ .Values.config.redpanda.auto_create_topics_enabled }}
-      data_directory: {{ .Values.config.redpanda.data_directory }}
-      developer_mode: {{ .Values.config.redpanda.developer_mode }}
-      kafka_api:
-        address: {{ .Values.config.redpanda.kafka_api.address }}
-        port: {{ .Values.config.redpanda.advertised_kafka_api.port }}
-      kafka_api_tls:
-        cert_file: {{ .Values.config.redpanda.kafka_api_tls.cert_file }}
-        enabled: {{ .Values.config.redpanda.kafka_api_tls.enabled }}
-        key_file: {{ .Values.config.redpanda.kafka_api_tls.key_file }}
-        truststore_file: {{ .Values.config.redpanda.kafka_api_tls.truststore_file }}
-      node_id: {{ .Values.config.redpanda.node_id }}
-      rpc_server:
-        address: {{ .Values.config.redpanda.rpc_server.address }}
-        port: {{ .Values.config.redpanda.rpc_server.port }}
+{{ toYaml .Values.config.redpanda | indent 6 }}
       seed_servers:
         {{- $envAll := . }}
         {{- range untilStep 0 (.Values.replicaCount|int) 1 }}
@@ -36,22 +19,4 @@ data:
             port: {{ $envAll.Values.config.redpanda.advertised_rpc_api.port }}
         {{- end }}
     rpk:
-      coredump_dir: {{ .Values.config.rpk.coredump_dir }}
-      enable_memory_locking: {{ .Values.config.rpk.enable_memory_locking }}
-      enable_usage_stats: {{ .Values.config.rpk.enable_usage_stats }}
-      overprovisioned: {{ .Values.config.rpk.overprovisioned }}
-      tls:
-        cert_file: {{ .Values.config.rpk.tls.cert_file }}
-        key_file: {{ .Values.config.rpk.tls.key_file }}
-        truststore_file: {{ .Values.config.rpk.tls.truststore_file }}
-      tune_aio_events: {{ .Values.config.rpk.tune_aio_events }}
-      tune_clocksource: {{ .Values.config.rpk.tune_clocksource }}
-      tune_coredump: {{ .Values.config.rpk.tune_coredump }}
-      tune_cpu: {{ .Values.config.rpk.tune_cpu }}
-      tune_disk_irq: {{ .Values.config.rpk.tune_disk_irq }}
-      tune_disk_nomerges: {{ .Values.config.rpk.tune_disk_nomerges }}
-      tune_disk_scheduler: {{ .Values.config.rpk.tune_disk_scheduler }}
-      tune_fstrim: {{ .Values.config.rpk.tune_fstrim }}
-      tune_network: {{ .Values.config.rpk.tune_network }}
-      tune_swappiness: {{ .Values.config.rpk.tune_swappiness }}
-      tune_transparent_hugepages: {{ .Values.config.rpk.tune_transparent_hugepages }}
+{{ toYaml .Values.config.rpk | indent 6 }}
