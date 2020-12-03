@@ -31,7 +31,6 @@ spec:
               rpk --config $CONFIG config set redpanda.advertised_rpc_api.port {{ .Values.config.redpanda.advertised_rpc_api.port }};
               rpk --config $CONFIG config set redpanda.advertised_kafka_api.address $SERVICE_NAME;
               rpk --config $CONFIG config set redpanda.advertised_kafka_api.port {{ .Values.config.redpanda.advertised_kafka_api.port }};
-              rpk --config $CONFIG config set rpk.smp {{ .Values.config.rpk.smp }};
           volumeMounts:
             - name: base-config 
               mountPath: /tmp/base-config 
