@@ -45,7 +45,7 @@ spec:
            - --config /tmp/config/redpanda.yaml
            - start
            - --
-           - --default-log-level={{ .Values.config.seastar.default-log-level }}
+           - --default-log-level={{ .Values.config.seastar.default_log_level }}
           ports:
             - containerPort: {{ .Values.config.redpanda.admin.port }}
               name: admin
