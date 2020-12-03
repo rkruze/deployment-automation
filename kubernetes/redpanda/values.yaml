@@ -12,8 +12,7 @@ replicaCount: 3
 
 image:
   repository: vectorized/redpanda
-  pullPolicy: IfNotPresent
-  # Overrides the image tag whose default is the chart appVersion.
+  # The imagePullPolicy will default to Always when the tag is 'latest'
   tag: latest
 
 config:
