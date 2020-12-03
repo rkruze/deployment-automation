@@ -2,6 +2,8 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: base-config
+  labels:
+   {{- include "redpanda.labels" . | nindent 4 }} 
 data:
   redpanda.yaml: |
     config_file: {{ .Values.config.config_file }}
@@ -14,7 +16,7 @@ data:
         {{- range untilStep 0 (.Values.replicaCount|int) 1 }}
         - node_id: {{ . }}
           host:
-            address: {{ template "redpanda.name" $envAll }}-{{ . }}
+            address: {{ template "redpanda.name" $envAll }}-{{ . }}.{{ template "redpanda.name" $envAll }}
             port: {{ $envAll.Values.config.redpanda.advertised_rpc_api.port }}
         {{- end }}
     rpk:

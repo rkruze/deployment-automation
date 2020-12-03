@@ -5,8 +5,8 @@
 # For further information on Helm templating see the documentation at:
 #   https://helm.sh/docs/chart_template_guide/values_files/
 #
-# For an explanation of Redpanda configuration values: 
-#   https://vectorized.io/docs/advanced-configuration/ 
+# For an explanation of Redpanda configuration values:
+#   https://vectorized.io/docs/advanced-configuration/
 
 replicaCount: 3
 
@@ -88,19 +88,30 @@ securityContext: {}
   # runAsNonRoot: true
   # runAsUser: 1000
 
-resources: 
+resources:
   requests:
-    cpu: 1   # 2
+    cpu: 1
     memory: 3Gi
   limits:
-    cpu: 1   # 2
-    memory: 6Gi
+    cpu: 1
+    memory: 3Gi
 
 nodeSelector: {}
 
 tolerations: []
 
-affinity: {}
+affinity:
+  podAntiAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 100
+        podAffinityTerm:
+          labelSelector:
+            matchExpressions:
+              - key: app
+                operator: In
+                values:
+                  - redpanda
+          topologyKey: kubernetes.io/hostname
 
 pdb:
   enabled: true
