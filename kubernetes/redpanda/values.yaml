@@ -89,10 +89,6 @@ securityContext: {}
   # runAsNonRoot: true
   # runAsUser: 1000
 
-service:
-  type: ClusterIP
-  port: 80
-
 resources: 
   requests:
     cpu: 1   # 2

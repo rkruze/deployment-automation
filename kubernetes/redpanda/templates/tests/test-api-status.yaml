@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Pod
+metadata:
+  name: "{{ include "redpanda.fullname" . }}-test-api-status"
+  labels:
+    {{- include "redpanda.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": test
+spec:
+  restartPolicy: Never
+  containers:
+    - name: {{ template "redpanda.name" . }}
+      image: {{ .Values.image.repository }} 
+      args: ['api status'] 
+      volumes:
+        - name: base-config
+          configMap:
+            name: base-config
+        - name: config
+          emptyDir: {}
