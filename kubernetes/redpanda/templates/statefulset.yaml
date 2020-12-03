@@ -33,10 +33,10 @@ spec:
               rpk --config $CONFIG config set redpanda.advertised_kafka_api.port {{ .Values.config.redpanda.advertised_kafka_api.port }};
               rpk --config $CONFIG config set rpk.smp {{ .Values.config.rpk.smp }};
           volumeMounts:
-            - name: {{ .Values.volumeMount.base.name }}
-              mountPath: {{ .Values.volumeMount.base.mountPath }}
-            - name: {{ .Values.volumeMount.name }}
-              mountPath: {{ .Values.volumeMount.mountPath }}
+            - name: base-config 
+              mountPath: /tmp/base-config 
+            - name: config
+              mountPath: /tmp/config
       containers:
         - name: {{ template "redpanda.name" . }}
           image: {{ .Values.image.repository }}
@@ -54,13 +54,13 @@ spec:
             - containerPort: {{ .Values.config.redpanda.advertised_rpc_api.port }}
               name: rpc
           volumeMounts:
-            - name: {{ .Values.volumeMount.name }}
-              mountPath: {{ .Values.volumeMount.mountPath }}
+            - name: config
+              mountPath: /tmp/config
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       volumes:
-        - name: {{ .Values.volumeMount.base.name }}
+        - name: base-config
           configMap:
-            name: {{ .Values.volumeMount.base.name }}
-        - name: {{ .Values.volumeMount.name }}
+            name: base-config
+        - name: config
           emptyDir: {}

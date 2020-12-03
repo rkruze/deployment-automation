@@ -63,13 +63,6 @@ config:
   seastar:
     default_log_level: info
 
-volumeMount:
-  name: config
-  mountPath: /tmp/config 
-  base:
-    name: base-config
-    mountPath: /tmp/base-config
-
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
