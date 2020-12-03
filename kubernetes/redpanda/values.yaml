@@ -60,6 +60,8 @@ config:
     tune_coredump: false
     tune_cpu: false
     tune_disk_irq: false
+  seastar:
+    default-log-level: info
 
 volumeMount:
   name: config
