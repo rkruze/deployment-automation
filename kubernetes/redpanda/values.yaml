@@ -113,6 +113,6 @@ tolerations: []
 affinity: {}
 
 pdb:
-  enabled: false
+  enabled: true
   maxUnavailable: 1
   minAvailable:
