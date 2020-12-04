@@ -2,6 +2,8 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: {{ template "redpanda.name" . }}
+  labels:
+   {{- include "redpanda.labels" . | nindent 4 }} 
 spec:
   selector:
     matchLabels:
@@ -21,25 +23,29 @@ spec:
             - >
               CONFIG=/tmp/config/redpanda.yaml;
               NODE_ID=${HOSTNAME##*-};
-              SERVICE_NAME={{ template "redpanda.name" . }}-$NODE_ID;
+              SERVICE_NAME={{ template "redpanda.name" . }}-$NODE_ID.{{ template "redpanda.name" . }};
               cp /tmp/base-config/redpanda.yaml $CONFIG;
               rpk --config $CONFIG config set redpanda.node_id $NODE_ID;
               if [ "$NODE_ID" = "0" ]; then
                 rpk --config $CONFIG config set redpanda.seed_servers '[]' --format yaml;
               fi;
               rpk --config $CONFIG config set redpanda.advertised_rpc_api.address $SERVICE_NAME;
-              rpk --config $CONFIG config set redpanda.advertised_rpc_api.port {{ .Values.config.redpanda.advertised_rpc_api.port }};
               rpk --config $CONFIG config set redpanda.advertised_kafka_api.address $SERVICE_NAME;
-              rpk --config $CONFIG config set redpanda.advertised_kafka_api.port {{ .Values.config.redpanda.advertised_kafka_api.port }};
           volumeMounts:
             - name: base-config 
               mountPath: /tmp/base-config 
             - name: config
               mountPath: /tmp/config
+          resources:
+            limits:
+              cpu: 1
+              memory: 128Mi
+            requests:
+              cpu: 1
+              memory: 128Mi
       containers:
         - name: {{ template "redpanda.name" . }}
           image: {{ .Values.image.repository }}
-          # command: ["/bin/sh", "-c"]
           args:
            - --config /tmp/config/redpanda.yaml
            - start
@@ -63,15 +69,9 @@ spec:
             name: base-config
         - name: config
           emptyDir: {}
-      {{- with .Values.nodeSelector }}
-      nodeSelector:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .Values.affinity }}
       affinity:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .Values.tolerations }}
+        {{- toYaml .Values.affinity | nindent 8 }}
+      nodeSelector:
+        {{- toYaml .Values.nodeSelector | nindent 8 }}
       tolerations:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
+        {{- toYaml .Values.tolerations | nindent 8 }}

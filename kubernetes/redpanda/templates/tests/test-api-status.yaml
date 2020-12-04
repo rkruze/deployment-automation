@@ -1,4 +1,4 @@
-apiVersion: apps/v1
+apiVersion: v1
 kind: Pod
 metadata:
   name: "{{ include "redpanda.fullname" . }}-test-api-status"
@@ -11,10 +11,13 @@ spec:
   containers:
     - name: {{ template "redpanda.name" . }}
       image: {{ .Values.image.repository }} 
-      args: ['api status'] 
-      volumes:
-        - name: base-config
-          configMap:
-            name: base-config
-        - name: config
-          emptyDir: {}
+      args: ["api", "status", "--brokers", "{{ include "redpanda.name" . }}:{{ .Values.config.redpanda.advertised_kafka_api.port }}"]
+      volumeMounts:
+        - name: base-config 
+          mountPath: /tmp/base-config 
+  volumes:
+    - name: base-config
+      configMap:
+        name: base-config
+    - name: config
+      emptyDir: {}
