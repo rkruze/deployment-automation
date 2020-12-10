@@ -78,7 +78,7 @@ The `redpanda-dev1.yaml` file in this folder contains settings and provisioning 
 
   `$ eksctl delete cluster --region us-west-2 --name redpanda-dev1`
 
-  (You can use the AWS Management Console to make sure no resources were left behind. For example, if you look at the **CloudFormation** page, you will see it takes a few seconds to clean up the nodes.)
+  (You can use the AWS Management Console to make sure no resources were left behind. For example, if you look at the [**CloudFormation**](https://us-west-2.console.aws.amazon.com/cloudformation/home?region=us-west-2) page, you will see it takes a few seconds to clean up the nodes. Also it is good to look at [all instances](https://us-west-2.console.aws.amazon.com/ec2/v2/home?region=us-west-2#Instances:) from time to time to check that none have accidentally been left running.)
 
 - To recreate the cluster, copy the `.ssh/vectorized-ec2.pub` from this folder to your `~/.ssh`, and call:
 
@@ -93,7 +93,6 @@ The `redpanda-dev1.yaml` file in this folder contains settings and provisioning 
 **Troubleshooting**
 
 - If you run `kubectl`commands and they show no information about Redpanda, make sure they use the correct namespace by including `-n redpanda`.
-
 - If you run `eksctl` commands and they show no information about the cluster, make sure they point to the right Amazon region by including `--region us-west-2`.
 
 
