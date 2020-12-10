@@ -1,0 +1,23 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: redpanda-dev1
+  region: us-west-2
+  version: "1.18"
+
+iam:
+  withOIDC: true
+
+nodeGroups:
+  - name: redpanda-dev1-nodegroup
+    instanceType: m5.large
+    minSize: 1
+    maxSize: 15
+    desiredCapacity: 3
+    ami: ami-05ecac759c81e0b0c
+    amiFamily: AmazonLinux2
+    volumeSize: 80
+    ssh:
+      allow: true
+      publicKeyPath: ~/.ssh/vectorized-ec2.pub
