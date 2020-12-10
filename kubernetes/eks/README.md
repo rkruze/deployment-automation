@@ -20,12 +20,13 @@ Amazon Elastic Kubernetes Service (EKS) enables us to run the Redpanda Kubernete
    ```
 
 4. Check that you have Vectorized AWS access. This command should return your AWS identity:
- ``` 
- $ aws sts get-caller-identity 
- ```
+   
+   ``` 
+   $ aws sts get-caller-identity 
+   ```
 
- 		You should also be able to see the `redpanda-dev1` cluster in the AWS Console:
-	  	https://us-west-2.console.aws.amazon.com/eks/home?region=us-west-2#/clusters/redpanda-dev1
+   You should also be able to see the `redpanda-dev1` cluster in the AWS Console:
+   https://us-west-2.console.aws.amazon.com/eks/home?region=us-west-2#/clusters/redpanda-dev1
 
 5. [Install `eksctl`.](https://docs.aws.amazon.com/eks/latest/userguide/getting-started-eksctl.html#install-eksctl)
 
