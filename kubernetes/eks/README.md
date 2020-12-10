@@ -39,7 +39,7 @@ Amazon Elastic Kubernetes Service (EKS) enables us to run the Redpanda Kubernete
 
 1. Update your `~/.kube/config` using the AWS CLI. This allows `kubectl` to access the remote `redpanda-dev1` cluster.
 
-   `$ aws eks update-kubeconfig --name redpanda-dev1`
+   `$ aws eks update-kubeconfig --name redpanda-dev1 --region us-west-2`
 
 2. Check that you can see the remote Kubernetes service:
 

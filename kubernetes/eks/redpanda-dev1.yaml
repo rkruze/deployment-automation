@@ -9,14 +9,12 @@ metadata:
 iam:
   withOIDC: true
 
-nodeGroups:
+managedNodeGroups:
   - name: redpanda-dev1-nodegroup
     instanceType: m5.large
     minSize: 1
-    maxSize: 15
+    maxSize: 4
     desiredCapacity: 3
-    ami: ami-05ecac759c81e0b0c
-    amiFamily: AmazonLinux2
     volumeSize: 80
     ssh:
       allow: true
