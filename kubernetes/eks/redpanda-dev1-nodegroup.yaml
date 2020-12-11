@@ -1,0 +1,24 @@
+kind: ClusterConfig
+apiVersion: eksctl.io/v1alpha5
+metadata:
+    name: redpanda-dev1
+    region: us-east-2
+nodeGroups:
+  - name: redpanda-dev1-nodegroup
+    minSize: 1
+    maxSize: 4
+    desiredCapacity: 3
+    instanceType: m5.large
+    ssh:
+      allow: true
+      publicKeyPath: ~/.ssh/vectorized-ec2.pub 
+    kubeletExtraConfig:
+      kubeReserved:
+        memory: "300Mi"
+        ephemeral-storage: "1Gi"
+      systemReserved:
+        memory: "200Mi"
+        ephemeral-storage: "1Gi"
+      evictionHard:
+        memory.available: "200Mi"
+        nodefs.available: "10%"
