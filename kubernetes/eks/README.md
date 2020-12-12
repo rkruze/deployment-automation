@@ -86,9 +86,23 @@ The `redpanda-dev1.yaml` file in this folder contains settings and provisioning 
 
   This takes a few minutes.
 
-- To let other developers access the cluster, ensure their IAM account is in the `aws-auth-redpanda.yaml` file in this folder, and call:
+- The node group for the cluster is added independently:
+
+   `$ eksctl create nodegroup --config-file=redpanda-dev1-nodegroup.yaml`
+
+   This also takes a few minutes.
+
+- To let other developers access the cluster, ensure their IAM account is in the `aws-auth-redpanda.yaml` file in this folder. This ConfigMap also authorizes nodes, so first ensure that the right `NodeInstanceRole`is in there. To see the current auth-map for the cluster, call
+
+   `$ kubectl edit -n kube-system configmap/aws-auth`
+
+   Copy the `mapRoles` section. Exit the editor, then paste that into your local copy of ``aws-auth-redpanda.yaml`, overwriting the existing `mapRoles` section.
+
+   Then call:
 
    `$ kubectl apply -f aws-auth-redpanda.yaml`
+
+   This should preserve the `NodeInstanceRole`, while authorizing users.
 
 **Troubleshooting**
 
