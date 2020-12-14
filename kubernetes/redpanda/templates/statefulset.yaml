@@ -12,9 +12,15 @@ spec:
   replicas: {{ .Values.replicaCount }}
   template:
     metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       labels:
         app: {{ template "redpanda.name" . }} 
     spec:
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
       initContainers:
         - name: {{ template "redpanda.name" . }}-configurator
           image: {{ .Values.image.repository }}
