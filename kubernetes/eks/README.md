@@ -96,7 +96,7 @@ The `redpanda-dev1.yaml` file in this folder contains settings and provisioning 
 
    `$ kubectl edit -n kube-system configmap/aws-auth`
 
-   Copy the `mapRoles` section. Exit the editor, then paste that into your local copy of ``aws-auth-redpanda.yaml`, overwriting the existing `mapRoles` section.
+   Copy the `mapRoles` section. Exit the editor, then paste that into your local copy of `aws-auth-redpanda.yaml`, overwriting the existing `mapRoles` section.
 
    Then call:
 
