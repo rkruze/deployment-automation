@@ -26,8 +26,10 @@ Amazon Elastic Kubernetes Service (EKS) enables us to run the Redpanda Kubernete
    ```
 
    You should also be able to see the `redpanda-dev1` cluster in the AWS Console:
-   https://us-west-2.console.aws.amazon.com/eks/home?region=us-west-2#/clusters/redpanda-dev1
+   https://us-east-2.console.aws.amazon.com/eks/home?region=us-east-2#/clusters/redpanda-dev1
 
+   You may need to change the region and/or cluster name in the URL. Check with the cluster creator, or create your own cluster -- see Admin functions below.
+   
 5. [Install `eksctl`.](https://docs.aws.amazon.com/eks/latest/userguide/getting-started-eksctl.html#install-eksctl)
 
 6. Ensure you have a local copy of the [`deployment-automation` repository](https://github.com/vectorizedio/deployment-automation).
@@ -40,7 +42,7 @@ Amazon Elastic Kubernetes Service (EKS) enables us to run the Redpanda Kubernete
 
 1. Update your `~/.kube/config` using the AWS CLI. This allows `kubectl` to access the remote `redpanda-dev1` cluster.
 
-   `$ aws eks update-kubeconfig --name redpanda-dev1 --region us-west-2`
+   `$ aws eks update-kubeconfig --name redpanda-dev1 --region us-east-2`
 
 2. Check that you can see the remote Kubernetes service:
 
@@ -50,11 +52,11 @@ Amazon Elastic Kubernetes Service (EKS) enables us to run the Redpanda Kubernete
    kubernetes   ClusterIP   10.100.0.1   <none>        443/TCP   3h20m
    
    $ kubectl cluster-info
-   Kubernetes master is running at https://5C4D7609E7F8AFF641ECF35227AF3160.gr7.us-west-2.eks.amazonaws.com
-   CoreDNS is running at https://5C4D7609E7F8AFF641ECF35227AF3160.gr7.us-west-2.eks.amazonaws.com/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy
+   Kubernetes master is running at https://5C4D7609E7F8AFF641ECF35227AF3160.gr7.us-east-2.eks.amazonaws.com
+   CoreDNS is running at https://5C4D7609E7F8AFF641ECF35227AF3160.gr7.us-east-2.eks.amazonaws.com/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy
    ```
 
-3. Check if the Redpanda Helm Chart is already installed on the EKS cluster by [viewing it in the AWS Management Console](https://us-west-2.console.aws.amazon.com/eks/home?region=us-west-2#/clusters/redpanda-dev1). If not, you can install it. In your terminal, go to the `deployment-automation/kubernetes` folder and run:
+3. In the AWS Management Console go to Workloads for the cluster to see if the Redpanda Helm Chart is already installed.  If not, you can install it. In your terminal, go to the `deployment-automation/kubernetes` folder and run:
 
    `$ helm install --namespace redpanda --create-namespace redpanda ./redpanda`
 
@@ -65,20 +67,20 @@ Amazon Elastic Kubernetes Service (EKS) enables us to run the Redpanda Kubernete
    
    $ kubectl -n redpanda run -ti --rm --restart=Never --image vectorized/redpanda rpk -- --brokers=redpanda:9092 api status 
    ```
-   
+
    It things are not working as expected, you can also uninstall the Helm Chart and then install again. The uninstall command is:
-   
+
    `$ helm -n redpanda uninstall redpanda`
 
 **Admin functions**
 
 The `redpanda-dev1.yaml` file in this folder contains settings and provisioning for the Redpanda EKS cluster used by `eksctl`.
 
-- To delete the cluster, call:
+- To delete the cluster (use the correct region), call:
 
-  `$ eksctl delete cluster --region us-west-2 --name redpanda-dev1`
+  `$ eksctl delete cluster --region us-east-2 --name redpanda-dev1`
 
-  (You can use the AWS Management Console to make sure no resources were left behind. For example, if you look at the [**CloudFormation**](https://us-west-2.console.aws.amazon.com/cloudformation/home?region=us-west-2) page, you will see it takes a few seconds to clean up the nodes. Also it is good to look at [all instances](https://us-west-2.console.aws.amazon.com/ec2/v2/home?region=us-west-2#Instances:) from time to time to check that none have accidentally been left running.)
+  (You can use the AWS Management Console to make sure no resources were left behind. For example, if you look at the [**CloudFormation**](https://us-east-2.console.aws.amazon.com/cloudformation/home?region=us-east-2) page, you will see it takes a few seconds to clean up the nodes. Also it is good to look at [all instances](https://us-east-2.console.aws.amazon.com/ec2/v2/home?region=us-east-2#Instances:) from time to time to check that none have accidentally been left running.)
 
 - To recreate the cluster, copy the `.ssh/vectorized-ec2.pub` from this folder to your `~/.ssh`, and call:
 
@@ -104,9 +106,13 @@ The `redpanda-dev1.yaml` file in this folder contains settings and provisioning 
 
    This should preserve the `NodeInstanceRole`, while authorizing users.
 
+**Tips**
+
+- You might find it useful to download [Lens](https://github.com/lensapp/lens), a tool for visualizing Kubernetes clusters.
+
 **Troubleshooting**
 
 - If you run `kubectl`commands and they show no information about Redpanda, make sure they use the correct namespace by including `-n redpanda`.
-- If you run `eksctl` commands and they show no information about the cluster, make sure they point to the right Amazon region by including `--region us-west-2`.
+- If you run `eksctl` commands and they show no information about the cluster, make sure they point to the right Amazon region by including (e.g.) `--region us-east-2`.
 
 
