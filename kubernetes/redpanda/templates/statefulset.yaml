@@ -43,12 +43,7 @@ spec:
             - name: config
               mountPath: /tmp/config
           resources:
-            limits:
-              cpu: 1
-              memory: 128Mi
-            requests:
-              cpu: 1
-              memory: 128Mi
+            {{- toYaml .Values.initResources | nindent 12 }}
       containers:
         - name: {{ template "redpanda.name" . }}
           image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
