@@ -88,9 +88,9 @@ securityContext: {}
   # runAsNonRoot: true
   # runAsUser: 1000
 
-# It is highly recommended to use integer values for cpu
 resources:
   requests:
+    # requests.cpu must be an integer for containers in Guaranteed pods to be given access to exclusive CPUs
     cpu: 1
     memory: 3Gi
   limits:
