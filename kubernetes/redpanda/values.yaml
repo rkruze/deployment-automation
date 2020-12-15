@@ -97,14 +97,6 @@ resources:
     cpu: 1
     memory: 3Gi
 
-initResources:
-  requests:
-    cpu: 1
-    memory: 128Mi
-  limits:
-    cpu: 1
-    memory: 128Mi
-
 nodeSelector: {}
 
 tolerations: []
