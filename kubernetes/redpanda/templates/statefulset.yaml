@@ -29,7 +29,7 @@ spec:
             - >
               CONFIG=/tmp/config/redpanda.yaml;
               NODE_ID=${HOSTNAME##*-};
-              SERVICE_NAME={{ template "redpanda.name" . }}-$NODE_ID.{{ template "redpanda.name" . }};
+              SERVICE_NAME={{ template "redpanda.name" . }}-$NODE_ID.{{ template "redpanda.name" . }}.{{ .Release.Namespace }}.svc.{{ .Values.clusterDomain }};
               cp /tmp/base-config/redpanda.yaml $CONFIG;
               rpk --config $CONFIG config set redpanda.node_id $NODE_ID;
               if [ "$NODE_ID" = "0" ]; then
@@ -48,10 +48,11 @@ spec:
         - name: {{ template "redpanda.name" . }}
           image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
           args:
-           - --config /tmp/config/redpanda.yaml
-           - start
-           - --
-           - --default-log-level={{ .Values.config.seastar.default_log_level }}
+           - >
+              --config /tmp/config/redpanda.yaml
+              start
+              --
+              --default-log-level={{ .Values.config.seastar.default_log_level }}
           ports:
             - containerPort: {{ .Values.config.redpanda.admin.port }}
               name: admin

@@ -10,6 +10,8 @@
 
 replicaCount: 3
 
+clusterDomain: cluster.local
+
 image:
   repository: vectorized/redpanda
   # The imagePullPolicy will default to Always when the tag is 'latest'
