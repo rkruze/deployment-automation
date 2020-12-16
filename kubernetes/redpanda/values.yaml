@@ -92,6 +92,7 @@ securityContext: {}
 
 resources:
   requests:
+    # requests.cpu must be an integer for containers in Guaranteed pods to be given access to exclusive CPUs
     cpu: 1
     memory: 3Gi
   limits:

@@ -10,7 +10,7 @@ spec:
   restartPolicy: Never
   containers:
     - name: {{ template "redpanda.name" . }}
-      image: {{ .Values.image.repository }} 
+      image: {{ .Values.image.repository }}:{{ .Values.image.tag }} 
       args: ["api", "status", "--brokers", "{{ include "redpanda.name" . }}:{{ .Values.config.redpanda.advertised_kafka_api.port }}"]
       volumeMounts:
         - name: base-config 
