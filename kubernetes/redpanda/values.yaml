@@ -85,7 +85,6 @@ statefulset:
   # Additional annotations to apply to the Pods of this StatefulSet.
   annotations: {}
 
-imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
