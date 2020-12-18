@@ -28,4 +28,8 @@ spec:
       port: {{ .Values.config.redpanda.advertised_kafka_api.port }}
       targetPort: {{ .Values.config.redpanda.advertised_kafka_api.port }}
   selector:
-    app: {{ template "redpanda.name" . }}
+    app.kubernetes.io/name: {{ template "redpanda.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name | quote }}
+  {{- with .Values.statefulset.labels }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}

@@ -23,8 +23,6 @@
 # For an explanation of Redpanda configuration values:
 #   https://vectorized.io/docs/advanced-configuration/
 
-replicaCount: 3
-
 clusterDomain: cluster.local
 
 image:
@@ -78,6 +76,14 @@ config:
     tune_disk_irq: false
   seastar:
     default_log_level: info
+
+statefulset:
+  replicas: 3
+  # Additional labels to apply to this StatefulSet and all its Pods.
+  labels:
+    app.kubernetes.io/component: redpanda
+  # Additional annotations to apply to the Pods of this StatefulSet.
+  annotations: {}
 
 imagePullSecrets: []
 nameOverride: ""

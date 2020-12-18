@@ -28,7 +28,7 @@ data:
 {{ toYaml .Values.config.redpanda | indent 6 }}
       seed_servers:
         {{- $envAll := . }}
-        {{- range untilStep 0 (.Values.replicaCount|int) 1 }}
+        {{- range untilStep 0 (.Values.statefulset.replicas|int) 1 }}
         - node_id: {{ . }}
           host:
             address: {{ template "redpanda.name" $envAll }}-{{ . }}.{{ template "redpanda.name" $envAll }}.{{ $envAll.Release.Namespace }}.svc.{{ $envAll.Values.clusterDomain }}
