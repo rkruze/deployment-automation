@@ -100,8 +100,10 @@ serviceAccount:
 
 podAnnotations: {}
 
-podSecurityContext: {}
-  # fsGroup: 2000
+# When using persistent storage the volume will be mounted as root. In order for redpanda to use the volume
+# we must set the fsGroup to the uid of redpanda, which is 101
+podSecurityContext:
+  fsGroup: 101
 
 securityContext: {}
   # capabilities:

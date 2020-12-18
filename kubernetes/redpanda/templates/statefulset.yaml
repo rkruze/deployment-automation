@@ -78,11 +78,19 @@ spec:
         - name: {{ template "redpanda.name" . }}
           image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
           args:
-           - >
+            - >
               --config /tmp/config/redpanda.yaml
+              --rpc-addr $(MY_POD_IP):33145
+              --kafka-addr $(MY_POD_IP):9092
+              --check=false
               start
               --
               --default-log-level={{ .Values.config.seastar.default_log_level }}
+          env:
+            - name: MY_POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
           ports:
             - containerPort: {{ .Values.config.redpanda.admin.port }}
               name: admin
@@ -91,6 +99,8 @@ spec:
             - containerPort: {{ .Values.config.redpanda.advertised_rpc_api.port }}
               name: rpc
           volumeMounts:
+            - name: datadir
+              mountPath: {{ .Values.config.redpanda.data_directory }}
             - name: config
               mountPath: /tmp/config
           resources:
