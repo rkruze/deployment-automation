@@ -2,15 +2,15 @@
 
 
 
-**Early Access**
+***Status: Early Access***
 
 
 
 This is the Helm Chart for [Redpanda](https://vectorized.io). A Helm Chart is a collection of files used to describe a set of Kubernetes resources, and may be used to deploy and manage Redpanda in a cloud such as AWS or GCP.
 
+For AWS see the [Redpanda EKS documentation](eks/README.md).
 
-
-## Local Installation
+### Local Installation
 
 For development purposes, it can be installed locally on Linux or Mac OS.
 
@@ -24,26 +24,83 @@ For development purposes, it can be installed locally on Linux or Mac OS.
 
 * Clone this repository (`deployment-automation`).
 
-  
 
-## Local Usage
+### Local Usage
 
 - Navigate to this folder (`kubernetes`).
 
-- Run `kind create cluster`
+- Create the cluster:
 
-- Run `helm install --namespace redpanda --create-namespace redpanda ./redpanda`. This will read the Helm Chart in the redpanda folder and deploy the Redpanda Docker image (the latest from Docker Hub) to pods. For now it just creates a basic 3 node Redpanda cluster. The `redpanda` namespace will be created if it does not already exist.
+  ```
+  $ kind create cluster
+  ```
+
+- Install the Helm Chart:
+
+  ```
+  $ helm install --namespace redpanda --create-namespace redpanda ./redpanda
+  ```
+
+  This will read the Helm Chart in the redpanda folder and deploy the Redpanda Docker image (the latest from Docker Hub) to pods. For now it just creates a basic 3 node Redpanda cluster. The `redpanda` namespace will be created if it does not already exist.
 
 - At this stage you will get further instructions in the terminal about how to run `rpk` in the cluster.
 
-  
 
 
-## Development
+### Development
 
-- Run `helm list` and  `kubectl get deployments`. These commands will show how many replicas in the cluster were successful in starting up and are available.
-- Run `kubectl get pods`. This shows the pods (groups of containers) that are running. You will see pod names, e.g. `redpanda-1605313023`.
-- To see the log for Redpanda on one of the pods, run  `kubectl logs <pod-name>`.
-- For troubleshooting, this command is also useful: `kubectl describe pod <pod-name>`.
-- To clean up, run `helm uninstall redpanda`. The cluster will still be running, just without Redpanda.
-- To experiment, edit the `redpanda/values.yaml` file, and run `helm install redpanda ./redpanda` again.
+- Show what Helm has currently deployed (remembering to use the `redpanda` namespace as usual):
+
+  ```
+  helm -n redpanda list
+  ```
+
+- Show how many replicas in the cluster were successful in starting up and are available:
+
+  ```
+  kubectl -n redpanda get statefulsets
+  ```
+
+- Show the pods (groups of containers) that are running:
+
+  ```
+  kubectl -n redpanda get pods
+  ```
+
+   You will see pod names, e.g. `redpanda-0`,  `redpanda-1`, `redpanda-2`.
+
+- To see the log for Redpanda on one of the pods, run:
+
+  ```
+  kubectl -n redpanda-0 logs <pod-name>
+  ```
+
+- For troubleshooting, this command is also useful:
+
+  ```
+  kubectl -n redpanda-0 describe pod <pod-name>
+  ```
+
+- To log into a pod:
+
+  ```
+  kubectl -n redpanda exec --stdin --tty <pod-name> /bin/bash
+  ```
+
+- To clean up, run:
+
+  ```
+  helm -n redpanda uninstall redpanda
+  ```
+
+  The cluster will still be running, just without Redpanda.
+
+- To experiment, edit the `redpanda/values.yaml` file, and run the install again:
+
+  ```
+  helm install redpanda ./redpanda
+  ```
+
+**Tips**
+
+- You can see much of the above information using [Lens](https://github.com/lensapp/lens), a tool for visualizing Kubernetes clusters.
