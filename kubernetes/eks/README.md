@@ -36,13 +36,17 @@ Amazon Elastic Kubernetes Service (EKS) enables us to run the Redpanda Kubernete
 
 7. Because Kubernetes has its own authorization system (RBAC), your IAM account in AWS will need to be made known to the EKS Redpanda cluster. This is currently done by a cluster admin putting your IAM details in a file [`aws-auth-redpanda.yaml`](https://github.com/vectorizedio/deployment-automation/kubernetes/eks/aws-auth-redpanda.yaml) (a ConfigMap) and calling: 
 
-   `kubectl apply -f aws-auth-redpanda.yaml`
+   ```
+   kubectl apply -f aws-auth-redpanda.yaml
+   ```
 
 **Steps**
 
 1. Update your `~/.kube/config` using the AWS CLI. This allows `kubectl` to access the remote `redpanda-dev1` cluster.
 
-   `$ aws eks update-kubeconfig --name redpanda-dev1 --region us-east-2`
+   ```
+   $ aws eks update-kubeconfig --name redpanda-dev1 --region us-east-2
+   ```
 
 2. Check that you can see the remote Kubernetes service:
 
@@ -58,7 +62,9 @@ Amazon Elastic Kubernetes Service (EKS) enables us to run the Redpanda Kubernete
 
 3. In the AWS Management Console go to Workloads for the cluster to see if the Redpanda Helm Chart is already installed.  If not, you can install it. In your terminal, go to the `deployment-automation/kubernetes` folder and run:
 
-   `$ helm install --namespace redpanda --create-namespace redpanda ./redpanda`
+   ```
+   $ helm install --namespace redpanda --create-namespace redpanda ./redpanda
+   ```
 
    This will output instructions on how to run `rpk` on the EKS cluster, for example:
 
@@ -70,39 +76,51 @@ Amazon Elastic Kubernetes Service (EKS) enables us to run the Redpanda Kubernete
 
    It things are not working as expected, you can also uninstall the Helm Chart and then install again. The uninstall command is:
 
-   `$ helm -n redpanda uninstall redpanda`
+   ```
+   $ helm -n redpanda uninstall redpanda
+   ```
 
 **Admin functions**
 
 The `redpanda-dev1.yaml` file in this folder contains settings and provisioning for the Redpanda EKS cluster used by `eksctl`.
 
 - To delete the cluster (use the correct region), call:
-
-  `$ eksctl delete cluster --region us-east-2 --name redpanda-dev1`
+  
+  ```
+  $ eksctl delete cluster --region us-east-2 --name redpanda-dev1
+  ```
 
   (You can use the AWS Management Console to make sure no resources were left behind. For example, if you look at the [**CloudFormation**](https://us-east-2.console.aws.amazon.com/cloudformation/home?region=us-east-2) page, you will see it takes a few seconds to clean up the nodes. Also it is good to look at [all instances](https://us-east-2.console.aws.amazon.com/ec2/v2/home?region=us-east-2#Instances:) from time to time to check that none have accidentally been left running.)
 
 - To recreate the cluster, copy the `.ssh/vectorized-ec2.pub` from this folder to your `~/.ssh`, and call:
 
-  `$ eksctl create cluster -f redpanda-dev1.yaml`
+  ```
+  $ eksctl create cluster -f redpanda-dev1.yaml
+  ```
 
   This takes a few minutes.
 
 - The node group for the cluster is added independently:
 
-   `$ eksctl create nodegroup --config-file=redpanda-dev1-nodegroup.yaml`
+   ```
+   $ eksctl create nodegroup --config-file=redpanda-dev1-nodegroup.yaml
+   ```
 
    This also takes a few minutes.
 
 - To let other developers access the cluster, ensure their IAM account is in the `aws-auth-redpanda.yaml` file in this folder. This ConfigMap also authorizes nodes, so first ensure that the right `NodeInstanceRole`is in there. To see the current auth-map for the cluster, call
 
-   `$ kubectl edit -n kube-system configmap/aws-auth`
+   ```
+   kubectl edit -n kube-system configmap/aws-auth
+   ```
 
    Copy the `mapRoles` section. Exit the editor, then paste that into your local copy of `aws-auth-redpanda.yaml`, overwriting the existing `mapRoles` section.
 
    Then call:
 
-   `$ kubectl apply -f aws-auth-redpanda.yaml`
+   ```
+   $ kubectl apply -f aws-auth-redpanda.yaml
+   ```
 
    This should preserve the `NodeInstanceRole`, while authorizing users.
 
@@ -114,5 +132,4 @@ The `redpanda-dev1.yaml` file in this folder contains settings and provisioning 
 
 - If you run `kubectl`commands and they show no information about Redpanda, make sure they use the correct namespace by including `-n redpanda`.
 - If you run `eksctl` commands and they show no information about the cluster, make sure they point to the right Amazon region by including (e.g.) `--region us-east-2`.
-
 
